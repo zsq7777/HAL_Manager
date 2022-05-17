@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
     external fun stringFromJNI(): String
     companion object {
         init {
-            System.loadLibrary("halmanager")
+            System.loadLibrary("hallibrary")
         }
     }
 }
