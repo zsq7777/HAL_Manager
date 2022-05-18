@@ -11,13 +11,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.sampleText.text = stringFromJNI()
     }
-    external fun stringFromJNI(): String
     companion object {
         init {
             System.loadLibrary("hallibrary")

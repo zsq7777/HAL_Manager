@@ -3,7 +3,7 @@ project("hallibrary")
 add_library(
         hallibrary
         SHARED
-        native-lib.cpp)
+        SerialPort.c)
 find_library(
         log-lib
         log)
