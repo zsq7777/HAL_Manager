@@ -71,7 +71,9 @@ static speed_t getBaudrate(jint baudrate)
 	}
 }
 
-JNIEXPORT jobject JNICALL Java_android_serialport_SerialPort_open
+
+
+JNIEXPORT jobject JNICALL Java_com_able_hallibrary_serialport_SerialPort_open
 		(JNIEnv *env, jclass thiz, jstring path, jint baudrate, jint stopBits, jint dataBits,
 		 jint parity, jint flowCon, jint flags) {
 
@@ -85,7 +87,7 @@ JNIEXPORT jobject JNICALL Java_android_serialport_SerialPort_open
 		speed = getBaudrate(baudrate);
 		if (speed == -1) {
 			/* TODO: throw an exception */
-			LOGE("Invalid baudrate");
+			LOGE("native方法：Invalid baudrate");
 			return NULL;
 		}
 	}
@@ -94,14 +96,16 @@ JNIEXPORT jobject JNICALL Java_android_serialport_SerialPort_open
 	{
 		jboolean iscopy;
 		const char *path_utf = (*env)->GetStringUTFChars(env, path, &iscopy);
-		LOGD("Opening serial port %s with flags 0x%x", path_utf, O_RDWR | flags);
+		LOGD("native方法：Opening serial port %s with flags 0x%x", path_utf, O_RDWR | flags);
 		//打开文件的方式打开串口，成功返回文件描述符，否则返回-1
-		fd = open(path_utf, O_RDWR | flags);
-		LOGD("open() fd = %d", fd);
+		//flags O_RDWR | O_NOCTTY | O_NONBLOCK/O_NDELAY   O_NONBLOCK:数据读不到回传-1
+		//O_RDWR默认阻塞模式, 增加|O_NONBLOCK为非阻塞模式，差别在于读操作时，没有读到数据返回-1
+		fd = open(path_utf, O_RDWR | O_NONBLOCK);
+		LOGD("native方法：open() fd = %d", fd);
 		(*env)->ReleaseStringUTFChars(env, path, path_utf);
 		if (fd == -1) {
 			/* Throw an exception */
-			LOGE("Cannot open port");
+			LOGE("native方法：Cannot open port");
 			/* TODO: throw an exception */
 			return NULL;
 		}
@@ -110,10 +114,10 @@ JNIEXPORT jobject JNICALL Java_android_serialport_SerialPort_open
 	/* Configure device */
 	{
 		struct termios cfg;
-		LOGD("Configuring serial port");
+		LOGD("native方法：Configuring serial port");
         /*保存测试现有串口参数设置，在这里如果串口号等出错，会有相关的出错信息*/
         if (tcgetattr(fd, &cfg)) {
-			LOGE("tcgetattr() failed");
+			LOGE("native方法：tcgetattr() failed");
 			close(fd);
 			/* TODO: throw an exception */
 			return NULL;
@@ -194,7 +198,7 @@ JNIEXPORT jobject JNICALL Java_android_serialport_SerialPort_open
 
         //激活新配置
 		if (tcsetattr(fd, TCSANOW, &cfg)) {
-			LOGE("tcsetattr() failed");
+			LOGE("native方法：tcsetattr() failed");
 			close(fd);
 			/* TODO: throw an exception */
 			return NULL;
@@ -213,12 +217,15 @@ JNIEXPORT jobject JNICALL Java_android_serialport_SerialPort_open
 	return mFileDescriptor;
 }
 
+
+
+
 /*
  * Class:     cedric_serial_SerialPort
  * Method:    close
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_android_serialport_SerialPort_close
+JNIEXPORT void JNICALL Java_com_able_hallibrary_serialport_SerialPort_close
 		(JNIEnv *env, jobject thiz) {
 	jclass SerialPortClass = (*env)->GetObjectClass(env, thiz);
 	jclass FileDescriptorClass = (*env)->FindClass(env, "java/io/FileDescriptor");
@@ -229,6 +236,6 @@ JNIEXPORT void JNICALL Java_android_serialport_SerialPort_close
 	jobject mFd = (*env)->GetObjectField(env, thiz, mFdID);
 	jint descriptor = (*env)->GetIntField(env, mFd, descriptorID);
 
-	LOGD("close(fd = %d)", descriptor);
+	LOGD("native方法：close(fd = %d)", descriptor);
 	close(descriptor);
 }
