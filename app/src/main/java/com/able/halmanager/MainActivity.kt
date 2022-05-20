@@ -16,24 +16,37 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val serialPort = SerialPort(File("/dev/ttyS2"), 115200, 0)
+        val mInputStream = serialPort.inputStream
+        val mOutputStream = serialPort.outputStream
+        Thread(Runnable {
+            while (true) {
+                if (mInputStream == null) return@Runnable
+                var buffer: ByteArray
+                val im: Int = mInputStream.available()
+                if (im > 0) {
+                    buffer = ByteArray(im)
+                    val size: Int = mInputStream.read(buffer)
+                    val str = String(buffer)
+                    Log.i("串口读取", str)
+                }
+                try {
+                    Thread.sleep(1000)
+                } catch (e: InterruptedException) {
+                    e.printStackTrace()
+                }
+            }
+        }).start()
+
         binding.btnOpen.setOnClickListener {
-            val serialPort = SerialPort(File("/dev/ttyS2"), 115200, 0)
-            val mInputStream = serialPort.inputStream
-            val outputStream = serialPort.outputStream
-            val thread = Thread(Runnable {
+            Thread(Runnable {
                 while (true) {
-                    if (mInputStream == null) return@Runnable
-                    var buffer: ByteArray
-                    val im: Int = mInputStream.available()
-                    if (im > 0) {
-                        buffer = ByteArray(im)
-                        val size: Int = mInputStream.read(buffer)
-                        val str = String(buffer)
-                        Log.i("读取到的String", str)
-                    }
+                    Log.i("串口写入","");
                     try {
-                        Thread.sleep(1000)
-                    } catch (e: InterruptedException) {
+                        val sendData = StringBuilder("{\"requestID\":1}").toString().toByteArray()
+                        mOutputStream.write(sendData)
+                        Thread.sleep(500)
+                    } catch (e: Exception) {
                         e.printStackTrace()
                     }
                 }
