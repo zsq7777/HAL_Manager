@@ -4,5 +4,5 @@
 build
 app/.cxx
 app/build
-hallibrary/.cxx
-hallibrary/build
+connectlibrary/.cxx
+connectlibrary/build

@@ -10,7 +10,11 @@ android {
         minSdk 21
         targetSdk 32
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        externalNativeBuild {
+            cmake {
+                cppFlags '-std=c++17'
+            }
+        }
         consumerProguardFiles "consumer-rules.pro"
     }
 
