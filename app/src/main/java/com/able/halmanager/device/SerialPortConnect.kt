@@ -18,12 +18,12 @@ data class SerialPortEntity(
     val flowCon: Int = 0//流控
 )
 
-class SerialPortConnection(serialPortEntity: SerialPortEntity) {
+class SerialPortConnection(private val serialPortEntity: SerialPortEntity) {
     private var mSerialPort: SerialPort? = null
     private var mInputStream: InputStream? = null
     private var mOutputStream: OutputStream? = null
 
-    fun open(serialPortEntity: SerialPortEntity) {
+    fun open() {
         mSerialPort = SerialPort(File(serialPortEntity.SerialPortName), serialPortEntity.baudrate)
         mInputStream = mSerialPort?.inputStream
         mOutputStream = mSerialPort?.outputStream
