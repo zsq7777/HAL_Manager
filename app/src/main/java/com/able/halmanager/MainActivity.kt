@@ -16,7 +16,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val serialPort = SerialPort(File("/dev/ttyS2"), 115200, 0)
+        val serialPort = SerialPort(File("/dev/ttyS2"), 115200)
         val mInputStream = serialPort.inputStream
         val mOutputStream = serialPort.outputStream
         Thread(Runnable {

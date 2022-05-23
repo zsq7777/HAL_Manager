@@ -194,11 +194,11 @@ public class SerialPort {
     private FileInputStream mFileInputStream;
     private FileOutputStream mFileOutputStream;
 
-    public SerialPort(File device, int baudrate, int flags) throws SecurityException, IOException {
-        this(device, baudrate, 1, 8, 0, 0, flags);
+    public SerialPort(File device, int baudrate) throws SecurityException, IOException {
+        this(device, baudrate, 1, 8, 0, 0);
     }
 
-    public SerialPort(File device, int baudrate, int stopBits, int dataBits, int parity, int flowCon, int flags)
+    public SerialPort(File device, int baudrate, int stopBits, int dataBits, int parity, int flowCon)
             throws SecurityException, IOException {
         /* Check access permission */  // 检查是否获取了指定串口的读写权限
         if (!device.canRead() || !device.canWrite()) {
@@ -220,7 +220,7 @@ public class SerialPort {
             }
         }
 
-        mFd = open(device.getAbsolutePath(), baudrate, stopBits, dataBits, parity, flowCon, flags);
+        mFd = open(device.getAbsolutePath(), baudrate, stopBits, dataBits, parity, flowCon, 0);
         if (mFd == null) {
             Log.e(TAG, "native open returns null");
             throw new IOException();
