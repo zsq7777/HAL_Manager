@@ -29,8 +29,12 @@ class SerialPortConnection(private val serialPortEntity: SerialPortEntity) {
         mOutputStream = mSerialPort?.outputStream
     }
 
-    fun command(sendData: ByteArray) {
+    private fun command(sendData: ByteArray) {
         mOutputStream?.write(sendData)
+    }
+
+    fun command(sendData: String) {
+        command(sendData.toByteArray())
     }
 
     fun close() {
